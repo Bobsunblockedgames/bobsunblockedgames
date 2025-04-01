@@ -1,16 +1,43 @@
-## Hi there 👋
+# BOB Games
 
-<!--
-**Bobsunblockedgames/bobsunblockedgames** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+A collection of free online games featuring various genres including action, racing, puzzle, and arcade games.
 
-Here are some ideas to get you started:
+## Features
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+- Modern, responsive design
+- Easy-to-navigate interface
+- Multiple game categories
+- Search functionality
+- Social media integration
+
+## Games
+
+### Action
+- BOB 1v1
+- BOB Boxing Random
+
+### Racing
+- BOB Racing
+
+### Puzzle
+- BOB Puzzle
+
+### Arcade
+- BOB Stickman Hook
+
+## Technologies Used
+
+- HTML5
+- CSS3
+- JavaScript
+- Canvas API
+
+## Getting Started
+
+1. Clone the repository
+2. Open `index.html` in your web browser
+3. Start playing!
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
