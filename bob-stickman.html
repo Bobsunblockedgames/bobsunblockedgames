@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOB Stickman Hook - BOB Games</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        #gameCanvas {
+            background-color: #000080;
+            border: 2px solid #1F51FF;
+            border-radius: 5px;
+        }
+
+        #gameUI {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #ffffff;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #1F51FF;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #backButton:hover {
+            background-color: #000080;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameUI">
+        Score: <span id="score">0</span><br>
+        Distance: <span id="distance">0</span>m
+    </div>
+    <a href="index.html" id="backButton">Back to Games</a>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreDisplay = document.getElementById('score');
+        const distanceDisplay = document.getElementById('distance');
+
+        // Set canvas size
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Game state
+        const player = {
+            x: 100,
+            y: 300,
+            width: 20,
+            height: 40,
+            score: 0,
+            distance: 0,
+            velocityX: 0,
+            velocityY: 0,
+            hook: {
+                attached: false,
+                x: 0,
+                y: 0,
+                length: 0
+            }
+        };
+
+        const obstacles = [];
+        const coins = [];
+        const gravity = 0.5;
+
+        // Event listeners
+        canvas.addEventListener('mousemove', (e) => {
+            if (!player.hook.attached) {
+                const rect = canvas.getBoundingClientRect();
+                player.hook.x = e.clientX - rect.left;
+                player.hook.y = e.clientY - rect.top;
+            }
+        });
+
+        canvas.addEventListener('click', () => {
+            if (!player.hook.attached) {
+                shootHook();
+            } else {
+                releaseHook();
+            }
+        });
+
+        // Game functions
+        function shootHook() {
+            const dx = player.hook.x - player.x;
+            const dy = player.hook.y - player.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 300) {
+                player.hook.attached = true;
+                player.hook.length = distance;
+                player.velocityX = dx / distance * 10;
+                player.velocityY = dy / distance * 10;
+            }
+        }
+
+        function releaseHook() {
+            player.hook.attached = false;
+            player.velocityX *= 0.5;
+            player.velocityY *= 0.5;
+        }
+
+        function generateObstacle() {
+            if (Math.random() < 0.02) {
+                obstacles.push({
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - 100),
+                    width: 30,
+                    height: 100
+                });
+            }
+        }
+
+        function generateCoin() {
+            if (Math.random() < 0.01) {
+                coins.push({
+                    x: canvas.width,
+                    y: Math.random() * (canvas.height - 50),
+                    width: 20,
+                    height: 20,
+                    collected: false
+                });
+            }
+        }
+
+        function updatePlayer() {
+            // Update position
+            player.x += player.velocityX;
+            player.y += player.velocityY;
+
+            // Apply gravity when not attached
+            if (!player.hook.attached) {
+                player.velocityY += gravity;
+            }
+
+            // Keep player in bounds
+            if (player.x < 0) player.x = 0;
+            if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+            if (player.y < 0) player.y = 0;
+            if (player.y > canvas.height - player.height) {
+                player.y = canvas.height - player.height;
+                player.velocityY = 0;
+            }
+
+            // Update distance
+            player.distance += Math.abs(player.velocityX);
+            distanceDisplay.textContent = Math.floor(player.distance / 100);
+
+            // Check for collisions
+            checkCollisions();
+        }
+
+        function checkCollisions() {
+            // Check obstacle collisions
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obstacle = obstacles[i];
+                if (player.x < obstacle.x + obstacle.width &&
+                    player.x + player.width > obstacle.x &&
+                    player.y < obstacle.y + obstacle.height &&
+                    player.y + player.height > obstacle.y) {
+                    gameOver();
+                }
+            }
+
+            // Check coin collisions
+            for (let i = coins.length - 1; i >= 0; i--) {
+                const coin = coins[i];
+                if (!coin.collected &&
+                    player.x < coin.x + coin.width &&
+                    player.x + player.width > coin.x &&
+                    player.y < coin.y + coin.height &&
+                    player.y + player.height > coin.y) {
+                    coin.collected = true;
+                    coins.splice(i, 1);
+                    player.score += 10;
+                    scoreDisplay.textContent = player.score;
+                }
+            }
+        }
+
+        function updateObstacles() {
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= 5;
+                if (obstacles[i].x + obstacles[i].width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        function updateCoins() {
+            for (let i = coins.length - 1; i >= 0; i--) {
+                coins[i].x -= 5;
+                if (coins[i].x + coins[i].width < 0) {
+                    coins.splice(i, 1);
+                }
+            }
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#000080';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw obstacles
+            ctx.fillStyle = '#1F51FF';
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+
+            // Draw coins
+            ctx.fillStyle = '#FFD700';
+            coins.forEach(coin => {
+                ctx.beginPath();
+                ctx.arc(coin.x + coin.width/2, coin.y + coin.height/2, coin.width/2, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw hook line
+            if (player.hook.attached) {
+                ctx.beginPath();
+                ctx.moveTo(player.x + player.width/2, player.y + player.height/2);
+                ctx.lineTo(player.hook.x, player.hook.y);
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Draw player
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        function gameOver() {
+            alert(`Game Over! Score: ${player.score}, Distance: ${Math.floor(player.distance/100)}m`);
+            location.reload();
+        }
+
+        function gameLoop() {
+            generateObstacle();
+            generateCoin();
+            updatePlayer();
+            updateObstacles();
+            updateCoins();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        gameLoop();
+    </script>
+</body>
+</html> 

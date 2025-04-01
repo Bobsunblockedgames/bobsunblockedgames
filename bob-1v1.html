@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOB 1v1 - BOB Games</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        #gameCanvas {
+            background-color: #000080;
+            border: 2px solid #1F51FF;
+            border-radius: 5px;
+        }
+
+        #gameUI {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: #ffffff;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        #backButton {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #1F51FF;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #backButton:hover {
+            background-color: #000080;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <div id="gameUI">
+        Health: <span id="health">100</span><br>
+        Materials: <span id="materials">100</span><br>
+        Score: <span id="score">0</span>
+    </div>
+    <a href="index.html" id="backButton">Back to Games</a>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const healthDisplay = document.getElementById('health');
+        const materialsDisplay = document.getElementById('materials');
+        const scoreDisplay = document.getElementById('score');
+
+        // Set canvas size
+        canvas.width = 800;
+        canvas.height = 600;
+
+        // Game state
+        const player = {
+            x: 100,
+            y: 300,
+            width: 40,
+            height: 60,
+            health: 100,
+            materials: 100,
+            score: 0,
+            speed: 5,
+            jumping: false,
+            velocityY: 0,
+            building: false
+        };
+
+        const buildings = [];
+        const bullets = [];
+        const gravity = 0.5;
+
+        // Controls
+        const keys = {
+            left: false,
+            right: false,
+            up: false,
+            down: false,
+            space: false
+        };
+
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    keys.left = true;
+                    break;
+                case 'ArrowRight':
+                    keys.right = true;
+                    break;
+                case 'ArrowUp':
+                    if (!player.jumping) {
+                        player.jumping = true;
+                        player.velocityY = -12;
+                    }
+                    break;
+                case 'ArrowDown':
+                    keys.down = true;
+                    break;
+                case ' ':
+                    keys.space = true;
+                    break;
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    keys.left = false;
+                    break;
+                case 'ArrowRight':
+                    keys.right = false;
+                    break;
+                case 'ArrowDown':
+                    keys.down = false;
+                    break;
+                case ' ':
+                    keys.space = false;
+                    break;
+            }
+        });
+
+        // Game functions
+        function updatePlayer() {
+            // Horizontal movement
+            if (keys.left) player.x -= player.speed;
+            if (keys.right) player.x += player.speed;
+
+            // Vertical movement
+            player.velocityY += gravity;
+            player.y += player.velocityY;
+
+            // Ground collision
+            if (player.y > canvas.height - player.height) {
+                player.y = canvas.height - player.height;
+                player.jumping = false;
+                player.velocityY = 0;
+            }
+
+            // Wall collision
+            if (player.x < 0) player.x = 0;
+            if (player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+
+            // Building placement
+            if (keys.space && player.materials >= 10) {
+                const building = {
+                    x: player.x,
+                    y: player.y + player.height,
+                    width: 40,
+                    height: 20
+                };
+                buildings.push(building);
+                player.materials -= 10;
+                materialsDisplay.textContent = player.materials;
+            }
+        }
+
+        function updateBuildings() {
+            for (let i = buildings.length - 1; i >= 0; i--) {
+                const building = buildings[i];
+                // Check for player collision
+                if (player.x < building.x + building.width &&
+                    player.x + player.width > building.x &&
+                    player.y < building.y + building.height &&
+                    player.y + player.height > building.y) {
+                    player.y = building.y - player.height;
+                    player.jumping = false;
+                    player.velocityY = 0;
+                }
+            }
+        }
+
+        function updateBullets() {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                bullet.x += bullet.speed;
+
+                // Remove bullets that go off screen
+                if (bullet.x > canvas.width) {
+                    bullets.splice(i, 1);
+                }
+
+                // Check for building collisions
+                for (let j = buildings.length - 1; j >= 0; j--) {
+                    const building = buildings[j];
+                    if (bullet.x < building.x + building.width &&
+                        bullet.x + bullet.width > building.x &&
+                        bullet.y < building.y + building.height &&
+                        bullet.y + bullet.height > building.y) {
+                        buildings.splice(j, 1);
+                        bullets.splice(i, 1);
+                        player.score += 10;
+                        scoreDisplay.textContent = player.score;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function draw() {
+            // Clear canvas
+            ctx.fillStyle = '#000080';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw buildings
+            ctx.fillStyle = '#1F51FF';
+            buildings.forEach(building => {
+                ctx.fillRect(building.x, building.y, building.width, building.height);
+            });
+
+            // Draw bullets
+            ctx.fillStyle = '#ffffff';
+            bullets.forEach(bullet => {
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            });
+
+            // Draw player
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
+
+        function gameLoop() {
+            updatePlayer();
+            updateBuildings();
+            updateBullets();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        gameLoop();
+    </script>
+</body>
+</html> 

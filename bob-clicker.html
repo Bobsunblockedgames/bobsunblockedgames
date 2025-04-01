@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOB Clicker - BOB Games</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .game-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            text-align: center;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .score-display {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: #333;
+        }
+
+        .click-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+            margin: 2rem 0;
+        }
+
+        .click-button:active {
+            transform: scale(0.95);
+        }
+
+        .upgrades {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .upgrade {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .upgrade:hover {
+            background: #e0e0e0;
+        }
+
+        .upgrade.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 1rem;
+            transition: background 0.3s;
+        }
+
+        .back-button:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>BOB Clicker</h1>
+        <div class="score-display">Score: <span id="score">0</span></div>
+        <button class="click-button" id="clickButton">Click Me!</button>
+        
+        <div class="upgrades">
+            <div class="upgrade" id="autoClicker">
+                <h3>Auto Clicker</h3>
+                <p>Cost: <span id="autoClickerCost">10</span></p>
+                <p>Level: <span id="autoClickerLevel">0</span></p>
+            </div>
+            <div class="upgrade" id="multiplier">
+                <h3>Multiplier</h3>
+                <p>Cost: <span id="multiplierCost">50</span></p>
+                <p>Level: <span id="multiplierLevel">1</span></p>
+            </div>
+            <div class="upgrade" id="bonus">
+                <h3>Bonus Points</h3>
+                <p>Cost: <span id="bonusCost">100</span></p>
+                <p>Level: <span id="bonusLevel">0</span></p>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-button">Back to Games</a>
+    </div>
+
+    <script>
+        let score = 0;
+        let autoClickerLevel = 0;
+        let multiplierLevel = 1;
+        let bonusLevel = 0;
+        let autoClickerInterval;
+
+        const clickButton = document.getElementById('clickButton');
+        const scoreDisplay = document.getElementById('score');
+        const autoClickerUpgrade = document.getElementById('autoClicker');
+        const multiplierUpgrade = document.getElementById('multiplier');
+        const bonusUpgrade = document.getElementById('bonus');
+
+        // Load saved game
+        const savedGame = localStorage.getItem('bobClicker');
+        if (savedGame) {
+            const gameData = JSON.parse(savedGame);
+            score = gameData.score;
+            autoClickerLevel = gameData.autoClickerLevel;
+            multiplierLevel = gameData.multiplierLevel;
+            bonusLevel = gameData.bonusLevel;
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            scoreDisplay.textContent = score;
+            document.getElementById('autoClickerLevel').textContent = autoClickerLevel;
+            document.getElementById('multiplierLevel').textContent = multiplierLevel;
+            document.getElementById('bonusLevel').textContent = bonusLevel;
+            
+            // Update costs
+            document.getElementById('autoClickerCost').textContent = Math.floor(10 * Math.pow(1.5, autoClickerLevel));
+            document.getElementById('multiplierCost').textContent = Math.floor(50 * Math.pow(1.5, multiplierLevel));
+            document.getElementById('bonusCost').textContent = Math.floor(100 * Math.pow(1.5, bonusLevel));
+
+            // Update upgrade states
+            autoClickerUpgrade.classList.toggle('disabled', score < Math.floor(10 * Math.pow(1.5, autoClickerLevel)));
+            multiplierUpgrade.classList.toggle('disabled', score < Math.floor(50 * Math.pow(1.5, multiplierLevel)));
+            bonusUpgrade.classList.toggle('disabled', score < Math.floor(100 * Math.pow(1.5, bonusLevel)));
+        }
+
+        function addPoints(points) {
+            score += points * multiplierLevel;
+            if (Math.random() < 0.1 * bonusLevel) {
+                score += points * 5;
+            }
+            updateDisplay();
+            saveGame();
+        }
+
+        function saveGame() {
+            localStorage.setItem('bobClicker', JSON.stringify({
+                score,
+                autoClickerLevel,
+                multiplierLevel,
+                bonusLevel
+            }));
+        }
+
+        clickButton.addEventListener('click', () => {
+            addPoints(1);
+            clickButton.style.transform = 'scale(0.95)';
+            setTimeout(() => clickButton.style.transform = 'scale(1)', 100);
+        });
+
+        autoClickerUpgrade.addEventListener('click', () => {
+            const cost = Math.floor(10 * Math.pow(1.5, autoClickerLevel));
+            if (score >= cost) {
+                score -= cost;
+                autoClickerLevel++;
+                
+                // Update auto clicker interval
+                if (autoClickerInterval) {
+                    clearInterval(autoClickerInterval);
+                }
+                autoClickerInterval = setInterval(() => {
+                    addPoints(1);
+                }, 1000 / autoClickerLevel);
+                
+                updateDisplay();
+                saveGame();
+            }
+        });
+
+        multiplierUpgrade.addEventListener('click', () => {
+            const cost = Math.floor(50 * Math.pow(1.5, multiplierLevel));
+            if (score >= cost) {
+                score -= cost;
+                multiplierLevel++;
+                updateDisplay();
+                saveGame();
+            }
+        });
+
+        bonusUpgrade.addEventListener('click', () => {
+            const cost = Math.floor(100 * Math.pow(1.5, bonusLevel));
+            if (score >= cost) {
+                score -= cost;
+                bonusLevel++;
+                updateDisplay();
+                saveGame();
+            }
+        });
+
+        // Start auto clicker if it was previously purchased
+        if (autoClickerLevel > 0) {
+            autoClickerInterval = setInterval(() => {
+                addPoints(1);
+            }, 1000 / autoClickerLevel);
+        }
+    </script>
+</body>
+</html> 
