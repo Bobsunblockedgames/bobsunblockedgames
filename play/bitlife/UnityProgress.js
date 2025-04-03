@@ -1,49 +1,24 @@
-var UnityProgress = UnityProgress || {};
-
-(function() {
-    function buildUnityProgress() {
-        var unityProgress = {};
-        
-        unityProgress.initialize = function(container, onProgress) {
-            var loadingBar = document.createElement("div");
-            loadingBar.id = "unity-loading-bar";
-            
-            var progressBar = document.createElement("div");
-            progressBar.id = "unity-progress-bar";
-            
-            var progressText = document.createElement("div");
-            progressText.id = "unity-progress-text";
-            progressText.textContent = "Loading...";
-            
-            loadingBar.appendChild(progressBar);
-            loadingBar.appendChild(progressText);
-            container.appendChild(loadingBar);
-            
-            return function(progress) {
-                progressBar.style.width = (progress * 100) + "%";
-                progressText.textContent = "Loading... " + Math.round(progress * 100) + "%";
-                
-                if (onProgress) {
-                    onProgress(progress);
-                }
-                
-                if (progress >= 1) {
-                    setTimeout(function() {
-                        loadingBar.style.opacity = "0";
-                        setTimeout(function() {
-                            container.removeChild(loadingBar);
-                        }, 500);
-                    }, 500);
-                }
-            };
-        };
-        
-        return unityProgress;
-    }
-    
-    if (typeof module !== "undefined" && module.exports) {
-        module.exports = buildUnityProgress();
-    } else {
-        window.UnityProgress = buildUnityProgress();
-    }
-})(); 
+function UnityProgress(unityInstance, progress) {
+  if (!unityInstance.Module)
+    return;
+  if (!unityInstance.logo) {
+    unityInstance.logo = document.createElement("div");
+    unityInstance.logo.className = "logo " + unityInstance.Module.splashScreenStyle;
+    unityInstance.container.appendChild(unityInstance.logo);
+  }
+  if (!unityInstance.progress) {    
+    unityInstance.progress = document.createElement("div");
+    unityInstance.progress.className = "progress " + unityInstance.Module.splashScreenStyle;
+    unityInstance.progress.empty = document.createElement("div");
+    unityInstance.progress.empty.className = "empty";
+    unityInstance.progress.appendChild(unityInstance.progress.empty);
+    unityInstance.progress.full = document.createElement("div");
+    unityInstance.progress.full.className = "full";
+    unityInstance.progress.appendChild(unityInstance.progress.full);
+    unityInstance.container.appendChild(unityInstance.progress);
+  }
+  unityInstance.progress.full.style.width = (100 * progress) + "%";
+  unityInstance.progress.empty.style.width = (100 * (1 - progress)) + "%";
+  if (progress == 1)
+    unityInstance.logo.style.display = unityInstance.progress.style.display = "none";
+}
