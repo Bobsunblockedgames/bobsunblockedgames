@@ -47,6 +47,21 @@ const games = {
             title: 'Duck Life',
             image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffcc44"/><text x="50" y="50" font-size="40" text-anchor="middle" fill="white">Duck Life</text></svg>',
             url: 'play/ducklife1/index.html'
+        },
+        {
+            title: 'Duck Life 2',
+            image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffcc44"/><text x="50" y="50" font-size="35" text-anchor="middle" fill="white">Duck Life 2</text></svg>',
+            url: 'play/ducklife2/index.html'
+        },
+        {
+            title: 'Duck Life 3',
+            image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffcc44"/><text x="50" y="50" font-size="35" text-anchor="middle" fill="white">Duck Life 3</text></svg>',
+            url: 'play/ducklife3/index.html'
+        },
+        {
+            title: 'Duck Life 4',
+            image: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23ffcc44"/><text x="50" y="50" font-size="35" text-anchor="middle" fill="white">Duck Life 4</text></svg>',
+            url: 'play/ducklife4/index.html'
         }
     ],
     puzzle: [
