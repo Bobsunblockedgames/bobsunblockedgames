@@ -1,4 +1,4 @@
-# BOB Games Platform
+# BOB Games https://bobsunblockedgames.github.io/bobsunblockedgames/index.html
 
 A collection of fun and engaging web-based games, featuring both original BOB games and popular unblocked games.
 
@@ -13,6 +13,7 @@ A collection of fun and engaging web-based games, featuring both original BOB ga
 - Krunker
 
 ### Racing Games
+- BOB Racing
 - Learn to Fly
 - Learn to Fly 2
 
@@ -21,6 +22,7 @@ A collection of fun and engaging web-based games, featuring both original BOB ga
 - BOB Tetris
 - 2048
 - Hextris
+- BitLife
 
 ### Arcade Games
 - BOB Stickman Hook
@@ -62,6 +64,19 @@ To run the website locally:
 - Mobile-friendly interface
 - Fast loading times
 
-## License
+## Technologies Used
 
-This project is open source and available under the MIT License. 
+- HTML5
+- CSS3
+- JavaScript
+- Canvas API
+
+## Getting Started
+
+1. Clone the repository
+2. Open `index.html` in your web browser
+3. Start playing!
+
+## Contributing
+
+This project is open source and available under the MIT License.
