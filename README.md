@@ -1,4 +1,4 @@
-# BOB Games https://bobsunblockedgames.github.io/bobsunblockedgames/index.html
+[# BOB Games https://bobsunblockedgames.github.io/bobsunblockedgames/index.html](https://bobsunblockedgames.github.io/bobsunblockedgames/)
 
 A collection of fun and engaging web-based games, featuring both original BOB games and popular unblocked games.
 
