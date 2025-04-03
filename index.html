@@ -5,68 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOB Games</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-    <div class="gradient-1"></div>
-    <div class="gradient-2"></div>
-    
     <header>
-        <div class="logo-container">
-            <img src="logo.png" alt="BOB Games Logo" class="logo">
-        </div>
         <nav>
-            <ul class="nav-links">
-                <li><a href="#all" class="active">All Games</a></li>
-                <li><a href="#action">Action</a></li>
-                <li><a href="#racing">Racing</a></li>
-                <li><a href="#puzzle">Puzzle</a></li>
-                <li><a href="#arcade">Arcade</a></li>
-            </ul>
+            <div class="logo-container">
+                <img src="logo.png" alt="BOB Games Logo" class="logo-image">
+                <span class="logo-text">BOB Games</span>
+            </div>
+            <div class="nav-links">
+                <a href="#all" class="active">All Games</a>
+                <a href="#action">Action</a>
+                <a href="#racing">Racing</a>
+                <a href="#puzzle">Puzzle</a>
+                <a href="#arcade">Arcade</a>
+            </div>
         </nav>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search games...">
-            <button id="searchButton"><i class="fas fa-search"></i></button>
-        </div>
     </header>
 
     <main>
         <section class="hero">
-            <div class="hero-content">
-                <img src="logo.png" alt="BOB Games Logo" class="hero-logo">
-                <p class="hero-description">Your ultimate destination for free online games. Play anywhere, anytime!</p>
-                <h1 class="hero-title">BOB Games</h1>
-                <div class="social-buttons">
-                    <a href="https://discord.gg/bobgames" target="_blank" class="social-button discord">
-                        <i class="fab fa-discord"></i> Discord
+            <div class="hero-logo">
+                <img src="logo.png" alt="BOB Games Logo" class="hero-logo-image">
+            </div>
+            <h1>Welcome to BOB Games</h1>
+            <p>Your Ultimate Gaming Destination</p>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search games...">
+            </div>
+            <div class="social-buttons">
+                <div class="social-content">
+                    <a href="https://discord.gg/bobgames" class="discord-btn" target="_blank">
+                        <img src="discord.png" alt="Discord" class="discord-icon">
+                        <span>Join our Discord</span>
                     </a>
-                    <a href="https://instagram.com/bobgames" target="_blank" class="social-button instagram">
-                        <i class="fab fa-instagram"></i> Instagram
+                    <a href="https://instagram.com/bobgames" class="instagram-btn" target="_blank">
+                        <img src="instagram.png" alt="Instagram" class="instagram-icon">
+                        <span>Follow us on Instagram</span>
                     </a>
                 </div>
             </div>
         </section>
 
-        <section class="featured-games">
+        <section class="featured-section">
             <h2>Featured Games</h2>
-            <div class="featured-grid"></div>
+            <div class="featured-grid game-grid"></div>
         </section>
 
-        <section class="categories">
+        <section class="categories-section">
             <h2>Categories</h2>
             <div class="category-grid">
                 <div class="category-card" data-category="action">
                     <h3>Action</h3>
-                    <p>Fast-paced games with lots of excitement</p>
+                    <p>Fast-paced action games</p>
                 </div>
                 <div class="category-card" data-category="racing">
                     <h3>Racing</h3>
-                    <p>Speed and competition on various tracks</p>
+                    <p>High-speed racing games</p>
                 </div>
                 <div class="category-card" data-category="puzzle">
                     <h3>Puzzle</h3>
-                    <p>Brain-teasing challenges to solve</p>
+                    <p>Brain-teasing puzzle games</p>
                 </div>
                 <div class="category-card" data-category="arcade">
                     <h3>Arcade</h3>
@@ -75,14 +75,14 @@
             </div>
         </section>
 
-        <section class="games">
+        <section class="games-section">
             <h2>All Games</h2>
             <div class="game-grid"></div>
         </section>
     </main>
 
     <footer>
-        <p>&copy; 2023 BOB Games. All rights reserved.</p>
+        <p>&copy; 2024 BOB Games. All rights reserved.</p>
     </footer>
 
     <script src="script.js"></script>
